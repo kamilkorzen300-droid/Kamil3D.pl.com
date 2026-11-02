@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kamil.pl — Druk 3D</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#080b12;color:white;font-family:Arial,sans-serif}
+header{padding:25px 18px;text-align:center;background:#101827;border-bottom:2px solid #168bff}
+h1{color:#168bff;font-size:36px;margin:5px}
+header p{color:#bbb}
+main{max-width:850px;margin:auto;padding:20px}
+h2{color:#168bff}
+.card{background:#111b2b;border:1px solid #243c5c;border-radius:16px;padding:20px;margin:16px 0}
+.price{font-size:22px;color:#54b5ff;font-weight:bold}
+button{background:#087cf0;color:white;border:0;border-radius:9px;padding:12px 17px;font-size:16px;margin:5px 0;cursor:pointer}
+button:hover{background:#005bc4}
+input,textarea{width:100%;padding:12px;margin:8px 0;background:#080e19;color:white;border:1px solid #345477;border-radius:8px;font-size:16px}
+footer{text-align:center;color:#888;padding:25px}
+</style>
+</head>
+<body>
+<header>
+<h1>Kamil.pl</h1>
+<p>Twoje pomysły. Nasz druk 3D.</p>
+</header>
+<main>
+<section class="card">
+<h2>🖨️ Witamy w Kamil.pl!</h2>
+<p>Tworzymy ciekawe przedmioty drukowane w technologii 3D.</p>
+</section>
+<h2>🛍️ Nasz sklep</h2>
+<div class="card">
+<h3>🔑 Brelok 3D</h3>
+<p>Personalizowany brelok do kluczy.</p>
+<p class="price">Od 8 zł</p>
+<button onclick="add('Brelok 3D',8)">Dodaj do koszyka</button>
+</div>
+<div class="card">
+<h3>⭐ Ozdoba 3D</h3>
+<p>Ozdoba do pokoju lub na prezent.</p>
+<p class="price">Od 15 zł</p>
+<button onclick="add('Ozdoba 3D',15)">Dodaj do koszyka</button>
+</div>
+<div class="card">
+<h3>🧩 Projekt na zamówienie</h3>
+<p>Masz własny pomysł? Opisz go w formularzu.</p>
+</div>
+<div class="card">
+<h2>🛒 Twój koszyk</h2>
+<div id="cart">Koszyk jest pusty.</div>
+<h3 id="total">Razem: 0 zł</h3>
+<button onclick="clearCart()">Wyczyść koszyk</button>
+</div>
+<div class="card">
+<h2>🎁 Bon podarunkowy</h2>
+<p>Masz bon? Wpisz kod, aby go sprawdzić.</p>
+<input id="voucher" placeholder="Wpisz kod bonu">
+<button onclick="checkVoucher()">Sprawdź kod</button>
+<p id="voucherResult"></p>
+</div>
+<div class="card">
+<h2>📩 Zapytaj o zamówienie</h2>
+<input id="name" placeholder="Twoje imię">
+<input id="email" type="email" placeholder="Twój e-mail">
+<textarea id="message" rows="4" placeholder="Co chcesz zamówić?"></textarea>
+<button onclick="prepareOrder()">Przygotuj wiadomość</button>
+<div id="orderResult"></div>
+</div>
+</main>
+<footer>© Kamil.pl — Druk 3D</footer>
+<script>
+let cart=[];
+function add(name,price){
+cart.push({name,price});
+render();
+}
+function render(){
+let el=document.getElementById('cart');
+if(!cart.length){el.textContent='Koszyk jest pusty.';}
+else{
+el.innerHTML=cart.map((p,i)=>`${p.name} — ${p.price} zł <button onclick="removeItem(${i})">Usuń</button>`).join('<br>');
+}
+document.getElementById('total').textContent='Razem: '+cart.reduce((s,p)=>s+p.price,0)+' zł';
+}
+function removeItem(i){cart.splice(i,1);render();}
+function clearCart(){cart=[];render();}
+function checkVoucher(){
+let code=document.getElementById('voucher').value.trim();
+document.getElementById('voucherResult').textContent=
+code==='7824 5916 8732 0650'?'To przykładowy kod bonu. Nie ma jeszcze aktywnego rabatu.':'Nie znaleziono takiego kodu bonu.';
+}
+function prepareOrder(){
+let name=document.getElementById('name').value.trim();
+let email=document.getElementById('email').value.trim();
+let message=document.getElementById('message').value.trim();
+if(!name||!email||!message){alert('Uzupełnij wszystkie pola.');return;}
+let order='Zamówienie Kamil.pl\nImię: '+name+'\nE-mail: '+email+'\nProdukty: '+cart.map(p=>p.name+' ('+p.price+' zł)').join(', ')+'\nOpis: '+message+'\nSuma: '+cart.reduce((s,p)=>s+p.price,0)+' zł';
+document.getElementById('orderResult').innerHTML='<textarea id="orderText" rows="8"></textarea><button onclick="copyOrder()">Kopiuj zamówienie</button>';
+
+document.getElementById(‘orderText’).value=order;
+}
+function copyOrder(){
+let el=document.getElementById(‘orderText’);
+el.select();document.execCommand(‘copy’);alert(‘Zamówienie skopiowane!’);
+}
+</body>
+</html>
